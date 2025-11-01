@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $expenses = getExpensesForPeriod($period['id']);
-$members = getAllMembers();
+$members = getPeriodMembers($period['id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">

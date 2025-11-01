@@ -4,11 +4,12 @@ require_once 'config.php';
 require_once 'functions.php';
 
 $period = getActivePeriod();
-$members = getAllMembers();
 
 if (!$period) {
     die('No active period found');
 }
+
+$members = getPeriodMembers($period['id']);
 
 // Get language preference (default: Bangla)
 $lang = isset($_GET['lang']) ? $_GET['lang'] : 'bn';

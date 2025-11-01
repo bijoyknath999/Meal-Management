@@ -7,7 +7,7 @@ require_once 'functions.php';
 requireLogin();
 
 $period = getActivePeriod();
-$members = getAllMembers();
+$members = getPeriodMembers($period['id']);
 
 // Get today's date
 $today = date('Y-m-d');

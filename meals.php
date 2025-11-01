@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date = $_POST['meal_date'] ?? '';
     
     if ($date) {
-        $members = getAllMembers();
+        $members = getPeriodMembers($period['id']);
         foreach ($members as $member) {
             $mealCount = intval($_POST['meal_' . $member['id']] ?? 0);
             saveDailyMeal($period['id'], $member['id'], $date, $mealCount);
@@ -40,7 +40,7 @@ foreach ($meals as $meal) {
     $mealsByMember[$meal['member_id']] = $meal['meal_count'];
 }
 
-$members = getAllMembers();
+$members = getPeriodMembers($period['id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">

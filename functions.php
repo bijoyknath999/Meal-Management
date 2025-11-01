@@ -16,6 +16,21 @@ function getAllMembers($activeOnly = true) {
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+// Get members for a specific period
+function getPeriodMembers($periodId) {
+    $db = getDB();
+    $stmt = $db->prepare("
+        SELECT m.* 
+        FROM members m
+        INNER JOIN period_members pm ON m.id = pm.member_id
+        WHERE pm.period_id = ? AND m.is_active = 1
+        ORDER BY m.name ASC
+    ");
+    $stmt->bind_param("i", $periodId);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
 // Get active meal period
 function getActivePeriod() {
     $db = getDB();
@@ -178,8 +193,8 @@ function calculateSettlements($periodId) {
     $stmt->bind_param("iddi", $totalMeals, $totalExpense, $mealRate, $periodId);
     $stmt->execute();
     
-    // Calculate settlements for each member
-    $members = getAllMembers();
+    // Calculate settlements for each member in this period
+    $members = getPeriodMembers($periodId);
     foreach ($members as $member) {
         $memberId = $member['id'];
         $memberMeals = $mealsByMember[$memberId] ?? 0;
