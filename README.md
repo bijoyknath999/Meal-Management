@@ -186,8 +186,8 @@ The **Meal Management System** is a comprehensive web application designed to si
 
 1. **Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/meal-management-system.git
-cd meal-management-system
+git clone https://github.com/bijoyknath999/Meal-Management.git
+cd Meal-Management
 ```
 
 2. **Copy to Web Server Directory**
@@ -565,7 +565,7 @@ If you encounter any issues:
 
 ### Contact
 - 📧 Email: support@yourdomain.com
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/meal-management-system/discussions)
+- 💬 Discussions: [GitHub Discussions](https://github.com/bijoyknath999/Meal-Management/discussions)
 
 ---
 
@@ -594,16 +594,16 @@ If you encounter any issues:
 
 ## 📊 Project Stats
 
-![Code Size](https://img.shields.io/github/languages/code-size/yourusername/meal-management-system)
-![Last Commit](https://img.shields.io/github/last-commit/yourusername/meal-management-system)
-![Issues](https://img.shields.io/github/issues/yourusername/meal-management-system)
-![Stars](https://img.shields.io/github/stars/yourusername/meal-management-system)
+![Code Size](https://img.shields.io/github/languages/code-size/bijoyknath999/Meal-Management)
+![Last Commit](https://img.shields.io/github/last-commit/bijoyknath999/Meal-Management)
+![Issues](https://img.shields.io/github/issues/bijoyknath999/Meal-Management)
+![Stars](https://img.shields.io/github/stars/bijoyknath999/Meal-Management)
 
 ---
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/meal-management-system&type=Date)](https://star-history.com/#yourusername/meal-management-system&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=bijoyknath999/Meal-Management&type=Date)](https://star-history.com/#bijoyknath999/Meal-Management&Date)
 
 ---
 
