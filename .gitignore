@@ -68,7 +68,5 @@ import_csv_improved.php
 import_correct.php
 import_final.php
 
-# Screenshots with sensitive data
-screenshots/*.png
-screenshots/*.jpg
-!screenshots/README.md
+# Screenshots are INCLUDED for GitHub
+# (Make sure to use sample data, not real personal info)
