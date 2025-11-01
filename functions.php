@@ -231,13 +231,14 @@ function calculateSettlements($periodId) {
     return true;
 }
 
-// Get settlements for a period
+// Get settlements for a period (only for members in that period)
 function getSettlements($periodId) {
     $db = getDB();
     $stmt = $db->prepare("
         SELECT s.*, m.name as member_name 
         FROM settlements s
         JOIN members m ON s.member_id = m.id
+        JOIN period_members pm ON m.id = pm.member_id AND pm.period_id = s.period_id
         WHERE s.period_id = ?
         ORDER BY s.balance DESC
     ");
