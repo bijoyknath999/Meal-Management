@@ -184,7 +184,7 @@ The **Meal Management System** is a comprehensive web application designed to si
 
 1. **Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/meal-management-system.git
+git clone https://github.com/bijoyknath999/meal-management-system.git
 cd meal-management-system
 ```
 
@@ -551,13 +551,13 @@ in the Software without restriction...
 
 ### Issues
 If you encounter any issues:
-1. Check the [Issues](https://github.com/yourusername/meal-management-system/issues) page
+1. Check the [Issues](https://github.com/bijoyknath999/meal-management-system/issues) page
 2. Search for existing solutions
 3. Create a new issue with details
 
 ### Contact
 - 📧 Email: support@yourdomain.com
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/meal-management-system/discussions)
+- 💬 Discussions: [GitHub Discussions](https://github.com/bijoyknath999/meal-management-system/discussions)
 
 ---
 
@@ -586,16 +586,16 @@ If you encounter any issues:
 
 ## 📊 Project Stats
 
-![Code Size](https://img.shields.io/github/languages/code-size/yourusername/meal-management-system)
-![Last Commit](https://img.shields.io/github/last-commit/yourusername/meal-management-system)
-![Issues](https://img.shields.io/github/issues/yourusername/meal-management-system)
-![Stars](https://img.shields.io/github/stars/yourusername/meal-management-system)
+![Code Size](https://img.shields.io/github/languages/code-size/bijoyknath999/meal-management-system)
+![Last Commit](https://img.shields.io/github/last-commit/bijoyknath999/meal-management-system)
+![Issues](https://img.shields.io/github/issues/bijoyknath999/meal-management-system)
+![Stars](https://img.shields.io/github/stars/bijoyknath999/meal-management-system)
 
 ---
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/meal-management-system&type=Date)](https://star-history.com/#yourusername/meal-management-system&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=bijoyknath999/meal-management-system&type=Date)](https://star-history.com/#bijoyknath999/meal-management-system&Date)
 
 ---
 
