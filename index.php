@@ -1,6 +1,7 @@
 <?php
 require_once 'config.php';
 require_once 'auth.php';
+// Deployment trigger
 require_once 'functions.php';
 
 requireLogin();
