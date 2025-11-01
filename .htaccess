@@ -1,0 +1,34 @@
+# Meal Management System - Apache Configuration
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect to login if accessing root
+DirectoryIndex index.php
+
+# Prevent directory browsing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^(config\.php|db\.php|auth\.php|functions\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Allow access to PHP files
+<FilesMatch "\.php$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Error Pages (optional)
+# ErrorDocument 404 /404.php
+# ErrorDocument 500 /500.php
+

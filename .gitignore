@@ -1,0 +1,74 @@
+# Meal Management System - Git Ignore File
+
+# Sensitive Configuration
+config.php
+
+# Uploads and User Data
+uploads/*
+!uploads/.gitkeep
+
+# Database exports and backups
+*.sql.gz
+*.sql.zip
+backup/
+database_export.sql
+
+# Temporary and Cache Files
+*.tmp
+*.cache
+*.log
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# OS Files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Environment Files
+.env
+.env.local
+.env.production
+
+# Node modules (if using any JS build tools)
+node_modules/
+
+# Composer vendor (if using Composer)
+vendor/
+
+# Session Files
+sessions/
+
+# Error Logs
+error_log
+debug.log
+php_error.log
+
+# Test Files
+*_test.php
+test_*.php
+
+# Excel files (original data files)
+*.xlsx
+*.xls
+
+# CSV data files (keep the sample, ignore user data)
+Meals_List_*.csv
+
+# Temporary scripts
+fix_*.php
+check_*.php
+find_*.php
+import_csv_improved.php
+import_correct.php
+import_final.php
+
+# Screenshots with sensitive data
+screenshots/*.png
+screenshots/*.jpg
+!screenshots/README.md
