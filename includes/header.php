@@ -1,5 +1,5 @@
 <?php
-// Get current page name
+// Get current page name for active navigation highlighting
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <header class="main-header">
