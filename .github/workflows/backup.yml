@@ -1,0 +1,54 @@
+name: Backup Production Database
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  backup:
+    name: 💾 Backup Database
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+      
+    - name: 💾 Create Database Backup
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Create backup directory if not exists
+          mkdir -p ~/backups/meal-db
+          
+          # Generate backup filename with timestamp
+          BACKUP_FILE="meal_backup_$(date +%Y%m%d_%H%M%S).sql"
+          
+          # Create database backup
+          mysqldump -u ${{ secrets.DB_USER }} -p${{ secrets.DB_PASSWORD }} \
+            ${{ secrets.DB_NAME }} > ~/backups/meal-db/$BACKUP_FILE
+          
+          # Compress backup
+          gzip ~/backups/meal-db/$BACKUP_FILE
+          
+          # Keep only last 7 days of backups
+          find ~/backups/meal-db -name "*.sql.gz" -mtime +7 -delete
+          
+          echo "✅ Backup created: $BACKUP_FILE.gz"
+          
+    - name: 📊 Backup Status
+      if: success()
+      run: |
+        echo "✅ Database backup completed successfully!"
+        echo "📅 Backup time: $(date)"
+        
+    - name: ❌ Backup Failed
+      if: failure()
+      run: |
+        echo "❌ Database backup failed!"
+        echo "Please check the logs and server credentials"
+

@@ -855,6 +855,73 @@ h3 { font-size: 1.5rem; }
     margin-top: 1.5rem;
 }
 
+/* ===== Member Selection Styling ===== */
+.members-selection-box {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 2px solid var(--border-color);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    background: #f8f9fa;
+}
+
+.member-checkbox-item {
+    padding: 10px;
+    margin: 5px 0;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.member-checkbox-item:hover {
+    background: #e3f2fd;
+    border-color: var(--primary-color);
+}
+
+.member-checkbox-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: normal !important;
+    margin: 0;
+}
+
+.member-checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.select-all-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.select-all-item label {
+    color: white !important;
+}
+
+.select-all-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.member-count-badge {
+    display: inline-block;
+    background: var(--success-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-left: 10px;
+}
+
 /* ===== Report Page ===== */
 .report-actions {
     display: flex;

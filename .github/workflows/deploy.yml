@@ -1,0 +1,51 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to Production Server
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+      
+    - name: 🚀 Deploy via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          echo "🔄 Starting deployment..."
+          cd ${{ secrets.SERVER_PATH }}
+          
+          echo "📥 Pulling latest changes..."
+          git pull origin main
+          
+          echo "🔒 Setting permissions..."
+          chmod 755 -R .
+          chmod 777 uploads/
+          chmod 644 config.php
+          
+          echo "✅ Deployment completed!"
+          echo "🌐 Site updated: $(date)"
+          
+    - name: 📢 Deployment notification
+      if: success()
+      run: |
+        echo "✅ Deployment successful!"
+        echo "📅 Deployed at: $(date)"
+        echo "📝 Commit: ${{ github.sha }}"
+        
+    - name: ❌ Deployment failed notification
+      if: failure()
+      run: |
+        echo "❌ Deployment failed!"
+        echo "Check the logs above for details"
+

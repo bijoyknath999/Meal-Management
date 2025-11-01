@@ -1,0 +1,50 @@
+name: Deploy via FTP
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+  workflow_dispatch:
+
+jobs:
+  deploy-ftp:
+    name: 📤 Deploy via FTP
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+      
+    - name: 📤 FTP Deployment
+      uses: SamKirkland/FTP-Deploy-Action@4.3.3
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          **/Thumbs.db
+          **/*.md
+          **/deploy-*.php
+          **/test_*.php
+          **/test_*.html
+          **/*.xlsx
+          **/*.csv
+          **/TESTING_*.md
+          **/READY_*.md
+          **/FEATURE_*.html
+          config.php
+          
+    - name: ✅ Deployment Success
+      if: success()
+      run: |
+        echo "✅ FTP Deployment successful!"
+        echo "📅 Deployed at: $(date)"
+

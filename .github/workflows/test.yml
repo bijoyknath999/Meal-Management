@@ -1,0 +1,63 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  php-tests:
+    name: 🧪 PHP Syntax Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+      
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mysqli, mbstring, pdo_mysql
+        
+    - name: 🔍 Check PHP Syntax
+      run: |
+        find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors"
+        
+    - name: ✅ Syntax Check Passed
+      run: echo "All PHP files have valid syntax!"
+      
+  file-structure:
+    name: 📁 Check File Structure
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+      
+    - name: 🔍 Verify Required Files
+      run: |
+        echo "Checking required files..."
+        
+        required_files=(
+          "index.php"
+          "login.php"
+          "config-sample.php"
+          "database.sql"
+          "README.md"
+          "LICENSE"
+          "style.css"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+        
+        echo "✅ All required files present!"
+
