@@ -559,7 +559,7 @@ in the Software without restriction...
 
 ### Issues
 If you encounter any issues:
-1. Check the [Issues](https://github.com/yourusername/meal-management-system/issues) page
+1. Check the [Issues](https://github.com/bijoyknath999/Meal-Management/issues) page
 2. Search for existing solutions
 3. Create a new issue with details
 
