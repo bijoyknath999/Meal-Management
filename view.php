@@ -210,6 +210,23 @@ if ($selectedMemberId) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $t['title']; ?> - <?php echo htmlspecialchars($period['period_name']); ?></title>
+    
+    <!-- Open Graph / WhatsApp Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?php echo BASE_URL; ?>/view.php">
+    <meta property="og:title" content="<?php echo $t['title']; ?> - <?php echo htmlspecialchars($period['period_name']); ?>">
+    <meta property="og:description" content="<?php echo $lang == 'bn' ? 'মোট খরচ: ৳' . formatCurrency($period['total_expense']) . ' | মোট খাবার: ' . $period['total_meals'] . ' | খাবার রেট: ৳' . formatCurrency($period['meal_rate']) : 'Total Expense: ৳' . formatCurrency($period['total_expense']) . ' | Total Meals: ' . $period['total_meals'] . ' | Meal Rate: ৳' . formatCurrency($period['meal_rate']); ?>">
+    <meta property="og:image" content="<?php echo BASE_URL; ?>/screenshots/dashboard.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<?php echo BASE_URL; ?>/view.php">
+    <meta name="twitter:title" content="<?php echo $t['title']; ?> - <?php echo htmlspecialchars($period['period_name']); ?>">
+    <meta name="twitter:description" content="<?php echo $lang == 'bn' ? 'মোট খরচ: ৳' . formatCurrency($period['total_expense']) . ' | মোট খাবার: ' . $period['total_meals'] : 'Total Expense: ৳' . formatCurrency($period['total_expense']) . ' | Total Meals: ' . $period['total_meals']; ?>">
+    <meta name="twitter:image" content="<?php echo BASE_URL; ?>/screenshots/dashboard.png">
+    
     <link rel="stylesheet" href="style.css?v=<?php echo APP_VERSION; ?>">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
