@@ -902,19 +902,26 @@ h3 { font-size: 1.5rem; }
 }
 
 .select-all-item {
-    padding: 12px;
-    margin-bottom: 10px;
-    background: var(--primary-color);
-    color: white;
+    padding: 10px;
+    margin: 5px 0;
+    background: white;
     border-radius: 5px;
+    border: 2px solid var(--primary-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
     font-weight: bold;
+}
+
+.select-all-item:hover {
+    background: #e3f2fd;
+    border-color: var(--primary-color);
 }
 
 .select-all-item label {
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: white !important;
+    color: var(--dark-color) !important;
     margin: 0;
 }
 
