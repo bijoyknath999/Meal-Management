@@ -51,13 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($id) {
             $db = getDB();
-            $stmt = $db->prepare("UPDATE members SET is_active = 0 WHERE id = ?");
+            // Permanently delete member
+            $stmt = $db->prepare("DELETE FROM members WHERE id = ?");
             $stmt->bind_param("i", $id);
             
             if ($stmt->execute()) {
-                $_SESSION['success'] = "Member deactivated successfully!";
+                $_SESSION['success'] = "Member deleted successfully!";
             } else {
-                $_SESSION['error'] = "Failed to deactivate member.";
+                $_SESSION['error'] = "Failed to delete member. Member may have associated records.";
             }
         }
         header('Location: members.php');
@@ -113,6 +114,7 @@ $members = getAllMembers(false); // Get all members including inactive
                     </p>
                     <div class="member-actions">
                         <button class="btn btn-sm btn-secondary" onclick='editMember(<?php echo json_encode($member); ?>)'>Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick='deleteMember(<?php echo $member["id"]; ?>, "<?php echo htmlspecialchars($member["name"]); ?>")'>Delete</button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -195,6 +197,29 @@ $members = getAllMembers(false); // Get all members including inactive
         document.getElementById('edit_phone').value = member.phone || '';
         document.getElementById('edit_email').value = member.email || '';
         openModal('editModal');
+    }
+    
+    function deleteMember(id, name) {
+        if (confirm('Are you sure you want to permanently delete "' + name + '"?\n\nThis will remove all associated meal and expense records. This action cannot be undone!')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '';
+            
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'delete';
+            
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = id;
+            
+            form.appendChild(actionInput);
+            form.appendChild(idInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
     
     // Close modal when clicking outside

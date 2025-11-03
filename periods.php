@@ -108,6 +108,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         header('Location: periods.php');
         exit();
+    } elseif ($action === 'delete') {
+        $id = intval($_POST['id'] ?? 0);
+        
+        if ($id) {
+            $db = getDB();
+            // Check if it's the active period
+            $stmt = $db->prepare("SELECT is_active FROM meal_periods WHERE id = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result()->fetch_assoc();
+            
+            if ($result && $result['is_active'] == 1) {
+                $_SESSION['error'] = "Cannot delete active period! Please activate another period first.";
+            } else {
+                // Permanently delete period (cascade will delete related records)
+                $stmt = $db->prepare("DELETE FROM meal_periods WHERE id = ?");
+                $stmt->bind_param("i", $id);
+                
+                if ($stmt->execute()) {
+                    $_SESSION['success'] = "Period deleted successfully!";
+                } else {
+                    $_SESSION['error'] = "Failed to delete period.";
+                }
+            }
+        }
+        header('Location: periods.php');
+        exit();
     }
 }
 
@@ -182,6 +209,7 @@ $periods = getAllPeriods();
                                 <input type="hidden" name="id" value="<?php echo $period['id']; ?>">
                                 <button type="submit" class="btn btn-sm btn-primary">Activate</button>
                             </form>
+                            <button type="button" class="btn btn-sm btn-danger" onclick='deletePeriod(<?php echo $period["id"]; ?>, "<?php echo htmlspecialchars($period["period_name"]); ?>")'>🗑️ Delete</button>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -417,6 +445,29 @@ $periods = getAllPeriods();
                 
                 openModal('editMembersModal');
             });
+    }
+    
+    function deletePeriod(id, name) {
+        if (confirm('Are you sure you want to permanently delete period "' + name + '"?\n\nThis will remove ALL meals, expenses, and settlement records for this period.\n\nThis action CANNOT be undone!')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '';
+            
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'delete';
+            
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = id;
+            
+            form.appendChild(actionInput);
+            form.appendChild(idInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
     
     window.onclick = function(event) {
