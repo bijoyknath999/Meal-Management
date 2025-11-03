@@ -26,9 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Recalculate settlements
         calculateSettlements($period['id']);
         
-        $success = "Meals saved successfully!";
+        $_SESSION['success'] = "Meals saved successfully!";
+        header('Location: meals.php?date=' . urlencode($date));
+        exit();
     }
 }
+
+// Retrieve flash messages from session
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
 
 // Get selected date (default to today)
 $selectedDate = $_GET['date'] ?? date('Y-m-d');

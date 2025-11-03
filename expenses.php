@@ -25,11 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($memberId && $amount > 0 && $date) {
             if (addExpense($period['id'], $memberId, $amount, $date, $description)) {
                 calculateSettlements($period['id']);
-                $success = "Expense added successfully!";
+                $_SESSION['success'] = "Expense added successfully!";
             } else {
-                $error = "Failed to add expense.";
+                $_SESSION['error'] = "Failed to add expense.";
             }
         }
+        header('Location: expenses.php');
+        exit();
     } elseif ($action === 'edit') {
         $id = intval($_POST['id'] ?? 0);
         $memberId = intval($_POST['member_id'] ?? 0);
@@ -40,24 +42,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id && $memberId && $amount > 0 && $date) {
             if (updateExpense($id, $memberId, $amount, $date, $description)) {
                 calculateSettlements($period['id']);
-                $success = "Expense updated successfully!";
+                $_SESSION['success'] = "Expense updated successfully!";
             } else {
-                $error = "Failed to update expense.";
+                $_SESSION['error'] = "Failed to update expense.";
             }
         }
+        header('Location: expenses.php');
+        exit();
     } elseif ($action === 'delete') {
         $id = intval($_POST['id'] ?? 0);
         
         if ($id) {
             if (deleteExpense($id)) {
                 calculateSettlements($period['id']);
-                $success = "Expense deleted successfully!";
+                $_SESSION['success'] = "Expense deleted successfully!";
             } else {
-                $error = "Failed to delete expense.";
+                $_SESSION['error'] = "Failed to delete expense.";
             }
         }
+        header('Location: expenses.php');
+        exit();
     }
 }
+
+// Retrieve flash messages from session
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
 
 $expenses = getExpensesForPeriod($period['id']);
 $members = getPeriodMembers($period['id']);

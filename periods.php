@@ -39,11 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
-                $success = "Period created successfully with " . count($selectedMembers) . " members!";
+                $_SESSION['success'] = "Period created successfully with " . count($selectedMembers) . " members!";
             } else {
-                $error = "Failed to create period.";
+                $_SESSION['error'] = "Failed to create period.";
             }
         }
+        header('Location: periods.php');
+        exit();
     } elseif ($action === 'edit') {
         $id = intval($_POST['id'] ?? 0);
         $periodName = trim($_POST['period_name'] ?? '');
@@ -58,11 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("siiisi", $periodName, $month, $year, $startDate, $endDate, $id);
             
             if ($stmt->execute()) {
-                $success = "Period updated successfully!";
+                $_SESSION['success'] = "Period updated successfully!";
             } else {
-                $error = "Failed to update period.";
+                $_SESSION['error'] = "Failed to update period.";
             }
         }
+        header('Location: periods.php');
+        exit();
     } elseif ($action === 'edit_members') {
         $periodId = intval($_POST['period_id'] ?? 0);
         $selectedMembers = $_POST['members'] ?? [];
@@ -85,8 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
-            $success = "Period members updated successfully!";
+            $_SESSION['success'] = "Period members updated successfully!";
         }
+        header('Location: periods.php');
+        exit();
     } elseif ($action === 'activate') {
         $id = intval($_POST['id'] ?? 0);
         
@@ -97,11 +103,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("i", $id);
             
             if ($stmt->execute()) {
-                $success = "Period activated successfully!";
+                $_SESSION['success'] = "Period activated successfully!";
             }
         }
+        header('Location: periods.php');
+        exit();
     }
 }
+
+// Retrieve flash messages from session
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
 
 // Get all members for the selection list
 $db = getDB();

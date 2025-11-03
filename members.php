@@ -20,11 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("sss", $name, $phone, $email);
             
             if ($stmt->execute()) {
-                $success = "Member added successfully!";
+                $_SESSION['success'] = "Member added successfully!";
             } else {
-                $error = "Failed to add member.";
+                $_SESSION['error'] = "Failed to add member.";
             }
         }
+        header('Location: members.php');
+        exit();
     } elseif ($action === 'edit') {
         $id = intval($_POST['id'] ?? 0);
         $name = trim($_POST['name'] ?? '');
@@ -37,11 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("sssi", $name, $phone, $email, $id);
             
             if ($stmt->execute()) {
-                $success = "Member updated successfully!";
+                $_SESSION['success'] = "Member updated successfully!";
             } else {
-                $error = "Failed to update member.";
+                $_SESSION['error'] = "Failed to update member.";
             }
         }
+        header('Location: members.php');
+        exit();
     } elseif ($action === 'delete') {
         $id = intval($_POST['id'] ?? 0);
         
@@ -51,13 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("i", $id);
             
             if ($stmt->execute()) {
-                $success = "Member deactivated successfully!";
+                $_SESSION['success'] = "Member deactivated successfully!";
             } else {
-                $error = "Failed to deactivate member.";
+                $_SESSION['error'] = "Failed to deactivate member.";
             }
         }
+        header('Location: members.php');
+        exit();
     }
 }
+
+// Retrieve flash messages from session
+$success = $_SESSION['success'] ?? null;
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['success'], $_SESSION['error']);
 
 $members = getAllMembers(false); // Get all members including inactive
 ?>
