@@ -380,8 +380,9 @@ $periods = getAllPeriods();
                 const membersList = document.getElementById('editMembersList');
                 membersList.innerHTML = '';
                 
+                // Build the members list with pre-selected ones checked
                 data.allMembers.forEach(member => {
-                    const isChecked = data.periodMembers.includes(member.id);
+                    const isChecked = data.periodMembers.includes(parseInt(member.id));
                     membersList.innerHTML += `
                         <div class="member-checkbox-item">
                             <label>
@@ -392,7 +393,14 @@ $periods = getAllPeriods();
                     `;
                 });
                 
+                // Update the member count badge
                 updateMemberCountEdit();
+                
+                // Update "Select All" checkbox state based on selected members
+                const totalMembers = data.allMembers.length;
+                const selectedMembers = data.periodMembers.length;
+                const selectAllCheckbox = document.getElementById('selectAllEdit');
+                selectAllCheckbox.checked = (selectedMembers === totalMembers);
                 
                 openModal('editMembersModal');
             });
