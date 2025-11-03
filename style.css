@@ -911,11 +911,18 @@ h3 { font-size: 1.5rem; }
 }
 
 .select-all-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
     color: white !important;
+    margin: 0;
 }
 
 .select-all-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
     margin-right: 10px;
+    cursor: pointer;
 }
 
 .member-count-badge {
