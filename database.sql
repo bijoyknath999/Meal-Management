@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS daily_meals (
 CREATE TABLE IF NOT EXISTS expenses (
     id INT PRIMARY KEY AUTO_INCREMENT,
     period_id INT NOT NULL,
-    member_id INT NOT NULL,
+    member_id INT NULL,
     amount DECIMAL(10,2) NOT NULL,
     expense_date DATE NOT NULL,
     description TEXT,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS expenses (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (period_id) REFERENCES meal_periods(id) ON DELETE CASCADE,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
     INDEX idx_period (period_id),
     INDEX idx_member (member_id),
     INDEX idx_date (expense_date)

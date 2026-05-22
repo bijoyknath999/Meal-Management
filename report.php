@@ -131,7 +131,7 @@ ksort($mealsByDate);
                         <?php foreach ($expenses as $expense): ?>
                             <tr>
                                 <td><?php echo formatDate($expense['expense_date']); ?></td>
-                                <td><?php echo htmlspecialchars($expense['member_name']); ?></td>
+                                <td><?php echo htmlspecialchars($expense['member_name']); ?><?php if (!$expense['member_id']): ?> <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">Needs</span><?php endif; ?></td>
                                 <td>৳<?php echo formatCurrency($expense['amount']); ?></td>
                                 <td><?php echo htmlspecialchars($expense['description']); ?></td>
                             </tr>

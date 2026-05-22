@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date = $_POST['expense_date'] ?? '';
         $description = trim($_POST['description'] ?? '');
         
-        if ($memberId && $amount > 0 && $date) {
+        if ($amount > 0 && $date) {
             if (addExpense($period['id'], $memberId, $amount, $date, $description)) {
                 calculateSettlements($period['id']);
                 $_SESSION['success'] = "Expense added successfully!";
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $date = $_POST['expense_date'] ?? '';
         $description = trim($_POST['description'] ?? '');
         
-        if ($id && $memberId && $amount > 0 && $date) {
+        if ($id && $amount > 0 && $date) {
             if (updateExpense($id, $memberId, $amount, $date, $description)) {
                 calculateSettlements($period['id']);
                 $_SESSION['success'] = "Expense updated successfully!";
@@ -123,7 +123,7 @@ $members = getPeriodMembers($period['id']);
                         <?php foreach ($expenses as $expense): ?>
                             <tr>
                                 <td><?php echo formatDate($expense['expense_date']); ?></td>
-                                <td><?php echo htmlspecialchars($expense['member_name']); ?></td>
+                                <td><?php echo htmlspecialchars($expense['member_name']); ?><?php if (!$expense['member_id']): ?> <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">Needs</span><?php endif; ?></td>
                                 <td class="amount">৳<?php echo formatCurrency($expense['amount']); ?></td>
                                 <td><?php echo htmlspecialchars($expense['description']); ?></td>
                                 <td class="actions">
@@ -152,9 +152,9 @@ $members = getPeriodMembers($period['id']);
             <form method="POST" action="">
                 <input type="hidden" name="action" value="add">
                 <div class="form-group">
-                    <label for="member_id">Paid By *</label>
-                    <select id="member_id" name="member_id" required>
-                        <option value="">Select Member</option>
+                    <label for="member_id">Paid By</label>
+                    <select id="member_id" name="member_id">
+                        <option value="0">Other (Needs)</option>
                         <?php foreach ($members as $member): ?>
                             <option value="<?php echo $member['id']; ?>"><?php echo htmlspecialchars($member['name']); ?></option>
                         <?php endforeach; ?>
@@ -191,9 +191,9 @@ $members = getPeriodMembers($period['id']);
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" id="edit_id" name="id">
                 <div class="form-group">
-                    <label for="edit_member_id">Paid By *</label>
-                    <select id="edit_member_id" name="member_id" required>
-                        <option value="">Select Member</option>
+                    <label for="edit_member_id">Paid By</label>
+                    <select id="edit_member_id" name="member_id">
+                        <option value="0">Other (Needs)</option>
                         <?php foreach ($members as $member): ?>
                             <option value="<?php echo $member['id']; ?>"><?php echo htmlspecialchars($member['name']); ?></option>
                         <?php endforeach; ?>
@@ -232,7 +232,7 @@ $members = getPeriodMembers($period['id']);
     
     function editExpense(expense) {
         document.getElementById('edit_id').value = expense.id;
-        document.getElementById('edit_member_id').value = expense.member_id;
+        document.getElementById('edit_member_id').value = expense.member_id || '0';
         document.getElementById('edit_amount').value = expense.amount;
         document.getElementById('edit_expense_date').value = expense.expense_date;
         document.getElementById('edit_description').value = expense.description || '';

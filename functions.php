@@ -93,9 +93,9 @@ function saveDailyMeal($periodId, $memberId, $date, $mealCount) {
 function getExpensesForPeriod($periodId) {
     $db = getDB();
     $stmt = $db->prepare("
-        SELECT e.*, m.name as member_name 
+        SELECT e.*, COALESCE(m.name, 'Other') as member_name 
         FROM expenses e
-        JOIN members m ON e.member_id = m.id
+        LEFT JOIN members m ON e.member_id = m.id
         WHERE e.period_id = ?
         ORDER BY e.expense_date DESC, e.id DESC
     ");
@@ -108,12 +108,21 @@ function getExpensesForPeriod($periodId) {
 function addExpense($periodId, $memberId, $amount, $date, $description = '') {
     $db = getDB();
     
-    $stmt = $db->prepare("
-        INSERT INTO expenses (period_id, member_id, amount, expense_date, description, created_by)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ");
     $createdBy = $_SESSION['admin_username'] ?? 'system';
-    $stmt->bind_param("iidsss", $periodId, $memberId, $amount, $date, $description, $createdBy);
+    
+    if ($memberId) {
+        $stmt = $db->prepare("
+            INSERT INTO expenses (period_id, member_id, amount, expense_date, description, created_by)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param("iidsss", $periodId, $memberId, $amount, $date, $description, $createdBy);
+    } else {
+        $stmt = $db->prepare("
+            INSERT INTO expenses (period_id, member_id, amount, expense_date, description, created_by)
+            VALUES (?, NULL, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param("idsss", $periodId, $amount, $date, $description, $createdBy);
+    }
     
     return $stmt->execute();
 }
@@ -122,12 +131,21 @@ function addExpense($periodId, $memberId, $amount, $date, $description = '') {
 function updateExpense($id, $memberId, $amount, $date, $description = '') {
     $db = getDB();
     
-    $stmt = $db->prepare("
-        UPDATE expenses 
-        SET member_id = ?, amount = ?, expense_date = ?, description = ?
-        WHERE id = ?
-    ");
-    $stmt->bind_param("idssi", $memberId, $amount, $date, $description, $id);
+    if ($memberId) {
+        $stmt = $db->prepare("
+            UPDATE expenses 
+            SET member_id = ?, amount = ?, expense_date = ?, description = ?
+            WHERE id = ?
+        ");
+        $stmt->bind_param("idssi", $memberId, $amount, $date, $description, $id);
+    } else {
+        $stmt = $db->prepare("
+            UPDATE expenses 
+            SET member_id = NULL, amount = ?, expense_date = ?, description = ?
+            WHERE id = ?
+        ");
+        $stmt->bind_param("dssi", $amount, $date, $description, $id);
+    }
     
     return $stmt->execute();
 }
@@ -161,11 +179,11 @@ function calculateSettlements($periodId) {
         $mealsByMember[$row['member_id']] = $row['total_meals'];
     }
     
-    // Get total expenses per member
+    // Get total expenses per member (only member-assigned expenses)
     $expenseQuery = "
         SELECT member_id, SUM(amount) as total_expense
         FROM expenses
-        WHERE period_id = ?
+        WHERE period_id = ? AND member_id IS NOT NULL
         GROUP BY member_id
     ";
     $stmt = $db->prepare($expenseQuery);
@@ -178,9 +196,22 @@ function calculateSettlements($periodId) {
         $expensesByMember[$row['member_id']] = $row['total_expense'];
     }
     
-    // Calculate totals
+    // Get total "other/needs" expenses (no member assigned)
+    $otherExpenseQuery = "
+        SELECT COALESCE(SUM(amount), 0) as total_other
+        FROM expenses
+        WHERE period_id = ? AND member_id IS NULL
+    ";
+    $stmt = $db->prepare($otherExpenseQuery);
+    $stmt->bind_param("i", $periodId);
+    $stmt->execute();
+    $otherResult = $stmt->get_result()->fetch_assoc();
+    $totalOtherExpense = floatval($otherResult['total_other']);
+    
+    // Calculate totals (include other expenses in total)
     $totalMeals = array_sum($mealsByMember);
-    $totalExpense = array_sum($expensesByMember);
+    $totalMemberExpense = array_sum($expensesByMember);
+    $totalExpense = $totalMemberExpense + $totalOtherExpense;
     
     $mealRate = $totalMeals > 0 ? $totalExpense / $totalMeals : 0;
     
@@ -193,15 +224,20 @@ function calculateSettlements($periodId) {
     $stmt->bind_param("iddi", $totalMeals, $totalExpense, $mealRate, $periodId);
     $stmt->execute();
     
-    // Calculate settlements for each member in this period
+    // Calculate per-member share of "other" expenses
     $members = getPeriodMembers($periodId);
+    $memberCount = count($members);
+    $otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
+    
+    // Calculate settlements for each member in this period
     foreach ($members as $member) {
         $memberId = $member['id'];
         $memberMeals = $mealsByMember[$memberId] ?? 0;
         $memberExpense = $expensesByMember[$memberId] ?? 0;
         
         $mealCost = $memberMeals * $mealRate;
-        $balance = $memberExpense - $mealCost;
+        // Balance = (what member paid + their share of other expenses) - meal cost
+        $balance = ($memberExpense + $otherPerMember) - $mealCost;
         
         $status = 'settled';
         if ($balance > 0.01) {
@@ -221,9 +257,11 @@ function calculateSettlements($periodId) {
                 balance = ?, 
                 status = ?
         ");
+        // total_expense in settlement includes member's share of other expenses
+        $memberTotalExpense = $memberExpense + $otherPerMember;
         $stmt->bind_param("iiidddsiddds", 
-            $periodId, $memberId, $memberMeals, $memberExpense, $mealCost, $balance, $status,
-            $memberMeals, $memberExpense, $mealCost, $balance, $status
+            $periodId, $memberId, $memberMeals, $memberTotalExpense, $mealCost, $balance, $status,
+            $memberMeals, $memberTotalExpense, $mealCost, $balance, $status
         );
         $stmt->execute();
     }

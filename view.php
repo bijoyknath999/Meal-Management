@@ -191,7 +191,7 @@ if ($selectedMemberId) {
     });
     
     $expenses = array_filter($expenses, function($e) use ($selectedMemberId) {
-        return $e['member_id'] == $selectedMemberId;
+        return $e['member_id'] == $selectedMemberId || !$e['member_id'];
     });
     
     foreach ($mealsByDate as $date => $dateMeals) {
@@ -620,7 +620,7 @@ if ($selectedMemberId) {
                             ?>
                                 <tr>
                                     <td><?php echo formatDate($expense['expense_date']); ?></td>
-                                    <td><?php echo htmlspecialchars($expense['member_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($expense['member_name']); ?><?php if (!$expense['member_id']): ?> <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">Needs</span><?php endif; ?></td>
                                     <td class="expense-amount">৳<?php echo $lang == 'bn' ? toBanglaNumber(formatCurrency($expense['amount'])) : formatCurrency($expense['amount']); ?></td>
                                     <td><?php echo htmlspecialchars($expense['description']); ?></td>
                                 </tr>
