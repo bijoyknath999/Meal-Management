@@ -18,6 +18,17 @@ $settlements = getSettlements($period['id']);
 $expenses = getExpensesForPeriod($period['id']);
 $meals = getAllMealsForPeriod($period['id']);
 
+// Calculate other/needs expense and share per member
+$members = getPeriodMembers($period['id']);
+$memberCount = count($members);
+$totalOtherExpense = 0;
+foreach ($expenses as $expense) {
+    if (!$expense['member_id']) {
+        $totalOtherExpense += $expense['amount'];
+    }
+}
+$otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
+
 // Group meals by date
 $mealsByDate = [];
 foreach ($meals as $meal) {
@@ -85,6 +96,7 @@ ksort($mealsByDate);
                             <th>Member</th>
                             <th>Meals</th>
                             <th>Meal Cost</th>
+                            <th>Other/Needs Cost</th>
                             <th>Paid</th>
                             <th>Balance</th>
                             <th>Status</th>
@@ -96,6 +108,7 @@ ksort($mealsByDate);
                                 <td><?php echo htmlspecialchars($settlement['member_name']); ?></td>
                                 <td><?php echo $settlement['total_meals']; ?></td>
                                 <td>৳<?php echo formatCurrency($settlement['meal_cost']); ?></td>
+                                <td>৳<?php echo formatCurrency($otherPerMember); ?></td>
                                 <td>৳<?php echo formatCurrency($settlement['total_expense']); ?></td>
                                 <td class="<?php echo $settlement['status']; ?>">
                                     ৳<?php echo formatCurrency(abs($settlement['balance'])); ?>

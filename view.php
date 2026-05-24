@@ -33,6 +33,7 @@ $translations = [
         'will_take' => 'পাবে',
         'will_give' => 'দিবে',
         'meal_cost' => 'খাবারের খরচ',
+        'other_needs_cost' => 'অন্যান্য/প্রয়োজনীয় খরচ',
         'balance' => 'ব্যালেন্স',
         'daily_meal_records' => 'দৈনিক খাবারের রেকর্ড',
         'no_data' => 'কোন তথ্য পাওয়া যায়নি',
@@ -88,6 +89,7 @@ $translations = [
         'will_take' => 'Will Take',
         'will_give' => 'Will Give',
         'meal_cost' => 'Meal Cost',
+        'other_needs_cost' => 'Other/Needs Cost',
         'balance' => 'Balance',
         'daily_meal_records' => 'Daily Meal Records',
         'no_data' => 'No data available',
@@ -172,6 +174,16 @@ calculateSettlements($period['id']);
 $settlements = getSettlements($period['id']);
 $expenses = getExpensesForPeriod($period['id']);
 $meals = getAllMealsForPeriod($period['id']);
+
+// Calculate total other/needs expense and per-member share
+$totalOtherExpense = 0;
+foreach ($expenses as $expense) {
+    if (!$expense['member_id']) {
+        $totalOtherExpense += $expense['amount'];
+    }
+}
+$memberCount = count($members);
+$otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
 
 // Group meals by date
 $mealsByDate = [];
@@ -523,6 +535,10 @@ if ($selectedMemberId) {
                                     <div class="detail-row">
                                         <span><?php echo $t['meal_cost']; ?>:</span>
                                         <strong>৳<?php echo $lang == 'bn' ? toBanglaNumber(formatCurrency($settlement['meal_cost'])) : formatCurrency($settlement['meal_cost']); ?></strong>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span><?php echo $t['other_needs_cost']; ?>:</span>
+                                        <strong>৳<?php echo $lang == 'bn' ? toBanglaNumber(formatCurrency($otherPerMember)) : formatCurrency($otherPerMember); ?></strong>
                                     </div>
                                     <div class="detail-row balance-row">
                                         <span><?php echo $t['balance']; ?>:</span>

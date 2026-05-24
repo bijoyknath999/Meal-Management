@@ -15,6 +15,16 @@ if (!$period) {
 // Recalculate settlements
 calculateSettlements($period['id']);
 $settlements = getSettlements($period['id']);
+$expenses = getExpensesForPeriod($period['id']);
+$members = getPeriodMembers($period['id']);
+$memberCount = count($members);
+$totalOtherExpense = 0;
+foreach ($expenses as $expense) {
+    if (!$expense['member_id']) {
+        $totalOtherExpense += $expense['amount'];
+    }
+}
+$otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,6 +88,10 @@ $settlements = getSettlements($period['id']);
                             <div class="detail-row">
                                 <span>Meal Cost:</span>
                                 <strong>৳<?php echo formatCurrency($settlement['meal_cost']); ?></strong>
+                            </div>
+                            <div class="detail-row">
+                                <span>Other/Needs Cost:</span>
+                                <strong>৳<?php echo formatCurrency($otherPerMember); ?></strong>
                             </div>
                             <div class="detail-row">
                                 <span>Total Paid:</span>

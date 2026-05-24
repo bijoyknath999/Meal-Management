@@ -208,12 +208,13 @@ function calculateSettlements($periodId) {
     $otherResult = $stmt->get_result()->fetch_assoc();
     $totalOtherExpense = floatval($otherResult['total_other']);
     
-    // Calculate totals (include other expenses in total)
+    // Calculate totals (include other expenses in total expense, but exclude from meal rate)
     $totalMeals = array_sum($mealsByMember);
     $totalMemberExpense = array_sum($expensesByMember);
     $totalExpense = $totalMemberExpense + $totalOtherExpense;
     
-    $mealRate = $totalMeals > 0 ? $totalExpense / $totalMeals : 0;
+    // Meal rate is calculated ONLY using member/food expenses
+    $mealRate = $totalMeals > 0 ? $totalMemberExpense / $totalMeals : 0;
     
     // Update period totals
     $stmt = $db->prepare("
@@ -236,13 +237,16 @@ function calculateSettlements($periodId) {
         $memberExpense = $expensesByMember[$memberId] ?? 0;
         
         $mealCost = $memberMeals * $mealRate;
-        // Balance = (what member paid + their share of other expenses) - meal cost
-        $balance = ($memberExpense + $otherPerMember) - $mealCost;
+        // Balance = what member paid - meal cost - their share of other/needs expenses
+        $balance = $memberExpense - $mealCost - $otherPerMember;
+        
+        // Round the final balance to standard integer
+        $balance = round($balance);
         
         $status = 'settled';
-        if ($balance > 0.01) {
+        if ($balance > 0) {
             $status = 'credit'; // Member should get money back
-        } elseif ($balance < -0.01) {
+        } elseif ($balance < 0) {
             $status = 'due'; // Member owes money
         }
         
@@ -257,11 +261,9 @@ function calculateSettlements($periodId) {
                 balance = ?, 
                 status = ?
         ");
-        // total_expense in settlement includes member's share of other expenses
-        $memberTotalExpense = $memberExpense + $otherPerMember;
         $stmt->bind_param("iiidddsiddds", 
-            $periodId, $memberId, $memberMeals, $memberTotalExpense, $mealCost, $balance, $status,
-            $memberMeals, $memberTotalExpense, $mealCost, $balance, $status
+            $periodId, $memberId, $memberMeals, $memberExpense, $mealCost, $balance, $status,
+            $memberMeals, $memberExpense, $mealCost, $balance, $status
         );
         $stmt->execute();
     }
