@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS settlements (
 -- Insert default admin (username: admin, password: admin123)
 -- Password is hashed using PHP password_hash()
 INSERT INTO admins (username, password, email) VALUES 
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@mealapp.com');
+('admin', '$2y$10$kxKrp78hktD0dIKSfgnFvuWFjpLUI0dtRdFHmij/6VlN5WDxi4m4G', 'admin@mealapp.com');
 
 -- Insert members from the CSV data
 INSERT INTO members (name) VALUES 

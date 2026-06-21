@@ -1,0 +1,4 @@
+# Block all direct access to endpoint files
+# All API requests must go through /api/index.php
+Order Deny,Allow
+Deny from all

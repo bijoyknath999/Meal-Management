@@ -34,7 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h1>🍽️ Meal Manager</h1>
+                <img src="assets/logo.svg" alt="Logo" style="width:80px;height:80px;border-radius:16px;margin-bottom:12px;">
+                <h1 style="margin-bottom:4px;">Meal Manager</h1>
                 <p>Admin Login</p>
             </div>
             

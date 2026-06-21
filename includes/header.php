@@ -5,7 +5,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
-            <a href="index.php">🍽️ Meal Manager</a>
+            <a href="index.php">
+                <img src="assets/logo.svg" alt="Logo" class="logo-img">
+                <span>Meal Manager</span>
+            </a>
         </div>
         
         <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">

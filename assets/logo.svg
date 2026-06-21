@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366F1"/>
+      <stop offset="100%" style="stop-color:#4F46E5"/>
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="58" fill="url(#bg)"/>
+  <!-- Bowl body -->
+  <path d="M30 65 Q30 85 60 85 Q90 85 90 65" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+  <!-- Bowl rim -->
+  <ellipse cx="60" cy="63" rx="34" ry="6" fill="none" stroke="white" stroke-width="4"/>
+  <!-- Steam lines -->
+  <path d="M45 50 Q42 40 47 30" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M60 48 Q63 38 58 28" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M75 50 Q78 40 73 30" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <!-- Rice dots in bowl -->
+  <circle cx="50" cy="72" r="2" fill="white" opacity="0.5"/>
+  <circle cx="60" cy="74" r="2" fill="white" opacity="0.5"/>
+  <circle cx="70" cy="72" r="2" fill="white" opacity="0.5"/>
+  <circle cx="55" cy="78" r="1.5" fill="white" opacity="0.4"/>
+  <circle cx="65" cy="77" r="1.5" fill="white" opacity="0.4"/>
+</svg>

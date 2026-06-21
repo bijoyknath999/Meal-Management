@@ -1,0 +1,36 @@
+RewriteEngine On
+
+# === SECURITY HEADERS ===
+Header always set X-Frame-Options "DENY"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Cache-Control "no-store, no-cache, must-revalidate"
+Header always set Pragma "no-cache"
+
+# === BLOCK DIRECT ACCESS TO SENSITIVE FILES ===
+# Block access to security.php, db.php, helpers.php directly
+RewriteRule ^security\.php$ - [F,L]
+RewriteRule ^db\.php$ - [F,L]
+RewriteRule ^helpers\.php$ - [F,L]
+
+# Block access to endpoints directory directly
+RewriteRule ^endpoints/ - [F,L]
+
+# === HANDLE CORS PREFLIGHT ===
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# === RATE LIMITING (Apache level - basic) ===
+# Additional rate limiting is done in PHP security.php
+
+# === ROUTE ALL REQUESTS TO INDEX.PHP ===
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# === BLOCK DIRECTORY LISTING ===
+Options -Indexes
+
+# === BLOCK ACCESS TO HIDDEN FILES ===
+RewriteRule (^\.|/\.) - [F,L]
