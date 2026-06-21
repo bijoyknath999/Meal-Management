@@ -9,6 +9,10 @@ DirectoryIndex index.php
 # Prevent directory browsing
 Options -Indexes
 
+# SVG MIME type (some servers don't serve SVG correctly)
+AddType image/svg+xml .svg
+AddType image/svg+xml .svgz
+
 # Protect sensitive files
 <FilesMatch "^(config\.php|db\.php|auth\.php|functions\.php)$">
     Order Allow,Deny
