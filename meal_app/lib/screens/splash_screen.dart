@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     });
 
     _controller.forward();
-    _initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initialize());
   }
 
   Future<void> _initialize() async {
