@@ -60,7 +60,19 @@ require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/db.php';
 
 // === AUTHENTICATION ===
-$apiKey = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+// Check multiple sources for Authorization header (Apache/CGI/FPM compatibility)
+$apiKey = $_SERVER['HTTP_AUTHORIZATION']
+    ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+    ?? $_SERVER['Authorization']
+    ?? '';
+
+// Also check getallheaders() as fallback
+if (empty($apiKey) && function_exists('getallheaders')) {
+    $headers = getallheaders();
+    $apiKey = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+}
+
+// Query parameter fallback
 if (empty($apiKey) && isset($_GET['api_key'])) {
     $apiKey = 'Bearer ' . $_GET['api_key'];
 }

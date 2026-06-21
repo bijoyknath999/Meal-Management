@@ -1,5 +1,12 @@
 RewriteEngine On
 
+# === PASS AUTHORIZATION HEADER TO PHP ===
+# Many Apache/PHP setups strip the Authorization header
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Also try via RewriteRule for CGI/FPM
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 # === SECURITY HEADERS ===
 Header always set X-Frame-Options "DENY"
 Header always set X-Content-Type-Options "nosniff"
