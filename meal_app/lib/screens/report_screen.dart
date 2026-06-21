@@ -331,7 +331,21 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildDailyMealsSection(AppProvider provider) {
-    final dailyMeals = provider.report?['daily_meals'] as Map<String, dynamic>? ?? {};
+    final rawMeals = provider.report?['daily_meals'];
+    // Handle both List and Map formats from API
+    Map<String, dynamic> dailyMeals = {};
+    if (rawMeals is Map) {
+      dailyMeals = Map<String, dynamic>.from(rawMeals);
+    } else if (rawMeals is List) {
+      for (final meal in rawMeals) {
+        final m = Map<String, dynamic>.from(meal);
+        final date = m['meal_date']?.toString() ?? '';
+        if (date.isNotEmpty) {
+          dailyMeals.putIfAbsent(date, () => []);
+          (dailyMeals[date] as List).add(m);
+        }
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,8 +362,8 @@ class _ReportScreenState extends State<ReportScreen> {
         else
           ...dailyMeals.entries.map((entry) {
             final date = entry.key;
-            final meals = entry.value as List;
-            final nonZeroMeals = meals.where((m) => (m['meal_count'] ?? 0) > 0).toList();
+            final meals = (entry.value as List).map((m) => Map<String, dynamic>.from(m)).toList();
+            final nonZeroMeals = meals.where((m) => (int.tryParse(m['meal_count'].toString()) ?? 0) > 0).toList();
 
             if (nonZeroMeals.isEmpty) return const SizedBox.shrink();
 
