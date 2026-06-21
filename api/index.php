@@ -44,7 +44,15 @@ Security::cleanupOldFiles();
 
 // === ROUTE PARSING ===
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = preg_replace('#^/api#', '', $uri);
+// Strip everything up to and including '/api/' or '/api' to get the resource
+// Works for: /api/dashboard, /meal-system/api/dashboard, etc.
+if (preg_match('#/api(?:/|$)(.*)#', $uri, $matches)) {
+    $uri = $matches[1];
+} else {
+    // Fallback: use the script filename approach
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+    $uri = substr($uri, strlen($scriptDir));
+}
 $uri = trim($uri, '/');
 $segments = explode('/', $uri);
 $resource = $segments[0] ?? '';
