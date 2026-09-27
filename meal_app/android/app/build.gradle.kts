@@ -1,10 +1,19 @@
 plugins {
     id("com.android.application")
+    id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("/Users/nasiruddin/Desktop/Projects/Meal-Management/meal_app/key.jks")
+            storePassword = "@4321bkna"
+            keyPassword = "@4321bkna"
+            keyAlias = "androkali"
+        }
+    }
     namespace = "com.mealapp.meal_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
