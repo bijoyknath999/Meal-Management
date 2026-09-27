@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/app_provider.dart';
 import '../models/expense.dart';
+import '../models/member.dart';
 import '../utils/theme.dart';
 import '../utils/constants.dart';
 
@@ -20,21 +21,41 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<AppProvider>();
       provider.loadExpenses();
-      if (provider.members.isEmpty) provider.loadMembers();
+      provider.loadActivePeriod();
     });
   }
 
-  void _showAddExpense() {
+  // Active members of the active period (same list as the meal screen).
+  // When editing, keep the expense's current payer so the dropdown value stays valid.
+  Future<List<Member>> _expenseMembers(Expense? expense) async {
     final provider = context.read<AppProvider>();
-    _showExpenseSheet(context, provider.members, null);
+    // Dashboard's active_period has no members, so fetch the full period if needed
+    if (provider.activePeriod?.members.isEmpty ?? true) {
+      await provider.loadActivePeriod();
+    }
+    final members = (provider.activePeriod?.members ?? [])
+        .map((m) => Member.fromJson(Map<String, dynamic>.from(m)))
+        .toList();
+    final memberId = expense?.memberId;
+    if (memberId != null && !members.any((m) => m.id == memberId)) {
+      members.add(Member(id: memberId, name: expense!.memberName));
+    }
+    return members;
   }
 
-  void _showEditExpense(Expense expense) {
-    final provider = context.read<AppProvider>();
-    _showExpenseSheet(context, provider.members, expense);
+  Future<void> _showAddExpense() async {
+    final members = await _expenseMembers(null);
+    if (!mounted) return;
+    _showExpenseSheet(context, members, null);
   }
 
-  void _showExpenseSheet(BuildContext context, List<dynamic> members, Expense? expense) {
+  Future<void> _showEditExpense(Expense expense) async {
+    final members = await _expenseMembers(expense);
+    if (!mounted) return;
+    _showExpenseSheet(context, members, expense);
+  }
+
+  void _showExpenseSheet(BuildContext context, List<Member> members, Expense? expense) {
     final isEdit = expense != null;
     int? selectedMemberId = expense?.memberId;
     final amountCtrl = TextEditingController(text: expense?.amount.toStringAsFixed(0) ?? '');

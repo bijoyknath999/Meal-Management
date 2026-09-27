@@ -26,8 +26,14 @@ class ApiService {
     Map<String, String>? queryParams,
   }) async {
     try {
-      final uri = Uri.parse('${AppConstants.baseUrl}/$endpoint')
-          .replace(queryParameters: queryParams);
+      // Some hosts (CGI/FPM) strip the Authorization header, so also send
+      // the key/token as a query param, which the API accepts as a fallback.
+      final uri = Uri.parse('${AppConstants.baseUrl}/$endpoint').replace(
+        queryParameters: {
+          ...?queryParams,
+          'api_key': _token ?? AppConstants.apiKey,
+        },
+      );
 
       http.Response response;
 
