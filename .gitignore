@@ -70,3 +70,11 @@ import_final.php
 
 # Screenshots are INCLUDED for GitHub
 # (Make sure to use sample data, not real personal info)
+
+# Flutter app: signing keys and build output
+*.jks
+*.keystore
+meal_app/android/key.properties
+meal_app/.dart_tool/
+meal_app/build/
+meal_app/.flutter-plugins-dependencies
