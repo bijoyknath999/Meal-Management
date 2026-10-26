@@ -36,7 +36,7 @@ function recalculateSettlementsForExpense($periodId) {
     $totalMeals = array_sum($mealsByMember);
     $totalMemberExpense = array_sum($expensesByMember);
     $totalExpense = $totalMemberExpense + $totalOtherExpense;
-    $mealRate = $totalMeals > 0 ? $totalMemberExpense / $totalMeals : 0;
+    $mealRate = $totalMeals > 0 ? $totalExpense / $totalMeals : 0;
     
     $stmt = $db->prepare("UPDATE meal_periods SET total_meals = ?, total_expense = ?, meal_rate = ? WHERE id = ?");
     $stmt->bind_param("iddi", $totalMeals, $totalExpense, $mealRate, $periodId);
@@ -46,8 +46,6 @@ function recalculateSettlementsForExpense($periodId) {
     $stmt->bind_param("i", $periodId);
     $stmt->execute();
     $members = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $memberCount = count($members);
-    $otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
     
     $stmt = $db->prepare("INSERT INTO settlements (period_id, member_id, total_meals, total_expense, meal_cost, balance, status) VALUES (?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE total_meals = ?, total_expense = ?, meal_cost = ?, balance = ?, status = ?");
     
@@ -56,7 +54,7 @@ function recalculateSettlementsForExpense($periodId) {
         $mm = $mealsByMember[$mid] ?? 0;
         $me = $expensesByMember[$mid] ?? 0;
         $mc = $mm * $mealRate;
-        $bal = round($me - $mc - $otherPerMember);
+        $bal = round($me - $mc);
         $status = 'settled';
         if ($bal > 0) $status = 'credit';
         elseif ($bal < 0) $status = 'due';

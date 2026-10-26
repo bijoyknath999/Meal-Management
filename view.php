@@ -501,6 +501,16 @@ if ($selectedMemberId) {
                     <p><?php echo $t['meal_rate']; ?></p>
                 </div>
             </div>
+            
+            <?php if ($totalOtherExpense > 0): ?>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-info">
+                    <h3>৳<?php echo $lang == 'bn' ? toBanglaNumber(formatCurrency($totalOtherExpense)) : formatCurrency($totalOtherExpense); ?></h3>
+                    <p><?php echo $t['other_needs_cost']; ?></p>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
         
         <!-- Tabs -->
@@ -535,10 +545,6 @@ if ($selectedMemberId) {
                                     <div class="detail-row">
                                         <span><?php echo $t['meal_cost']; ?>:</span>
                                         <strong>৳<?php echo $lang == 'bn' ? toBanglaNumber(formatCurrency($settlement['meal_cost'])) : formatCurrency($settlement['meal_cost']); ?></strong>
-                                    </div>
-                                    <div class="detail-row">
-                                        <span><?php echo $t['other_needs_cost']; ?>:</span>
-                                        <strong>৳<?php echo $lang == 'bn' ? toBanglaNumber(formatCurrency($otherPerMember)) : formatCurrency($otherPerMember); ?></strong>
                                     </div>
                                     <div class="detail-row balance-row">
                                         <span><?php echo $t['balance']; ?>:</span>

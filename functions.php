@@ -208,13 +208,13 @@ function calculateSettlements($periodId) {
     $otherResult = $stmt->get_result()->fetch_assoc();
     $totalOtherExpense = floatval($otherResult['total_other']);
     
-    // Calculate totals (include other expenses in total expense, but exclude from meal rate)
+    // Calculate totals (including other/needs expenses in total expense and meal rate)
     $totalMeals = array_sum($mealsByMember);
     $totalMemberExpense = array_sum($expensesByMember);
     $totalExpense = $totalMemberExpense + $totalOtherExpense;
     
-    // Meal rate is calculated ONLY using member/food expenses
-    $mealRate = $totalMeals > 0 ? $totalMemberExpense / $totalMeals : 0;
+    // Meal rate is calculated using total expenses divided by total meals
+    $mealRate = $totalMeals > 0 ? $totalExpense / $totalMeals : 0;
     
     // Update period totals
     $stmt = $db->prepare("
@@ -225,20 +225,16 @@ function calculateSettlements($periodId) {
     $stmt->bind_param("iddi", $totalMeals, $totalExpense, $mealRate, $periodId);
     $stmt->execute();
     
-    // Calculate per-member share of "other" expenses
-    $members = getPeriodMembers($periodId);
-    $memberCount = count($members);
-    $otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
-    
     // Calculate settlements for each member in this period
+    $members = getPeriodMembers($periodId);
     foreach ($members as $member) {
         $memberId = $member['id'];
         $memberMeals = $mealsByMember[$memberId] ?? 0;
         $memberExpense = $expensesByMember[$memberId] ?? 0;
         
         $mealCost = $memberMeals * $mealRate;
-        // Balance = what member paid - meal cost - their share of other/needs expenses
-        $balance = $memberExpense - $mealCost - $otherPerMember;
+        // Balance = what member paid - meal cost (all expenses including needs are covered via meal rate)
+        $balance = $memberExpense - $mealCost;
         
         // Round the final balance to standard integer
         $balance = round($balance);

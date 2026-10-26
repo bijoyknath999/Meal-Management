@@ -59,6 +59,12 @@ $otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
                         <span>Meal Rate:</span>
                         <strong>৳<?php echo formatCurrency($period['meal_rate']); ?></strong>
                     </div>
+                    <?php if ($totalOtherExpense > 0): ?>
+                    <div class="summary-item">
+                        <span>Other/Needs:</span>
+                        <strong>৳<?php echo formatCurrency($totalOtherExpense); ?></strong>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -88,10 +94,6 @@ $otherPerMember = $memberCount > 0 ? $totalOtherExpense / $memberCount : 0;
                             <div class="detail-row">
                                 <span>Meal Cost:</span>
                                 <strong>৳<?php echo formatCurrency($settlement['meal_cost']); ?></strong>
-                            </div>
-                            <div class="detail-row">
-                                <span>Other/Needs Cost:</span>
-                                <strong>৳<?php echo formatCurrency($otherPerMember); ?></strong>
                             </div>
                             <div class="detail-row">
                                 <span>Total Paid:</span>
